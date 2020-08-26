@@ -1,3 +1,4 @@
+# Used when we run our Docker Build Command to tell docker what files and directories it can ignore
 jupyter_notebooks*
 */env*
 */venv*
