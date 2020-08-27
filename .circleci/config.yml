@@ -115,23 +115,23 @@ jobs:
             git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
   
   section_11_build_and_push_to_heroku_docker:
-    <<: *defaults
+    <<: *defaults # default sets
     steps:
       - checkout
-      - setup_remote_docker:
+      - setup_remote_docker: # new command which is a circle ci feature that lets you build docker images in CI, you need to enable that
           docker_layer_caching: true
-      - run: docker login --username=$HEROKU_EMAIL --password=$HEROKU_API_KEY registry.heroku.com
+      - run: docker login --username=$HEROKU_EMAIL --password=$HEROKU_API_KEY registry.heroku.com # heroku email is env var in circleci, we are login into the heroku registry which is a registry of docker images which heroku maintains, like docker hub where most of the images we use live, this allows to use docker images in heroku
       - run:
           name: Setup Heroku CLI
-          command: |
-            wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
+          command: | # set up the heroku CLI wget to install prog and CLI from web # this is also a set up to run the below heroku command
+            wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh 
       - run: 
           name: Build and Push Image
-          command: |
+          command: | # make refers to a make files which we added in this commit, we are running 2 make jobs, build-ml-api and push-ml-api
             make build-ml-api-heroku push-ml-api-heroku
       - run: 
           name: Release to Heroku
-          command: |
+          command: | # heroku container is telling heroku that we are going to use a docker image when we are doing our release, as oppose to the CLI git interface that we used before, this is it as heroku does deployment using docker.
             heroku container:release web --app $HEROKU_APP_NAME
 
 workflows:
